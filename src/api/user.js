@@ -48,3 +48,10 @@ export const upUserState = (uid, type) => {
     url: `users/${uid}/state/${type}`
   })
 }
+// 删除单个用户
+export const delUser = (id) => {
+  return axios({
+    method: 'delete',
+    url: `users/${id}`
+  })
+}

@@ -36,14 +36,14 @@
       </el-table-column>
       <el-table-column label="操作" width="500">
         <template slot-scope="scope">
-          <el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
-            <el-button size="mini" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+            <el-button size="mini" type="primary" @click="handleEdit(scope.row)" class="el-icon-edit"></el-button>
           </el-tooltip>
-          <el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
-            <el-button size="mini" type="warning" @click="handlefx(scope.$index, scope.row)">分享</el-button>
+          <el-tooltip class="item" effect="dark" content="分享" placement="top">
+            <el-button size="mini" type="warning" @click="handlefx(scope.$index, scope.row)" class="el-icon-share"></el-button>
           </el-tooltip>
-          <el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-tooltip class="item" effect="dark" content="删除" placement="top">
+            <el-button size="mini" type="danger" @click="handleDelete(scope.row.id)" class="el-icon-delete"></el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import { getUserList, addUser, upUserState } from '@/api/user.js'
+import { getUserList, addUser, upUserState, delUser } from '@/api/user.js'
 export default {
   data () {
     return {
@@ -138,6 +138,37 @@ export default {
     this.into()
   },
   methods: {
+    // 删除用户单个id
+    handleDelete (id) {
+      // 1.是否确定删除
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 单机确定按钮，执行下一步.then实现删除
+        delUser(id).then(res => {
+          // console.log(res)
+          if (res.data.meta.status === 200) {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          }
+          // 判断本次删除之后，当前页还有没有数据，如果有数据，就保持页码为当前页，否则就到上一页
+          // ceil(x) 函数返回一个大于或等于 x 的的最小整数。
+          this.pagenum = Math.ceil(this.total - 1 / this.pagesize) < this.pagenum ? --this.pagenum : this.pagenum
+          this.into()
+        }).catch(err1 => {
+          this.$message.error('删除失败')
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
     // 修改用户的状态
     changeUserState (id, type) {
       upUserState(id, type).then(res => {
