@@ -56,8 +56,7 @@ export default {
           { required: true, message: '请输入用户名', trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { required: true, message: '请输入密码', trigger: 'blur' }
         ]
       }
     }
@@ -73,6 +72,7 @@ export default {
           login(this.loginForm).then(res => {
             // console.log(res)
             if (res.data.meta.status === 200) {
+              localStorage.setItem('token', res.data.data.token)
               // 跳转
               this.$router.push({ name: 'home' })
             } else {
@@ -80,7 +80,7 @@ export default {
             }
           })
         } else {
-          console.log('no')
+          // console.log('no')
           this.$message.error('格式输入错误，请重新输入')
           //   一定要return false，否则不能真正阻止
           return false

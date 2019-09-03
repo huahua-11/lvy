@@ -4,6 +4,8 @@ import VueRouter from 'vue-router'
 // @:src  相当于Src目录
 import Login from '@/views/Login.vue'
 import Home from '@/views/Home.vue'
+import Welcome from '@/views/Welcome.vue'
+import Users from '@/views/user/index.vue'
 
 Vue.use(VueRouter)
 
@@ -12,7 +14,7 @@ var router = new VueRouter({
   routes: [
     {
       path: '/',
-      redirect: { name: 'login' }
+      redirect: { name: 'home' }
     },
     {
       name: 'login',
@@ -22,7 +24,20 @@ var router = new VueRouter({
     {
       name: 'home',
       path: '/home',
-      component: Home
+      component: Home,
+      redirect: { path: '/home/wel' },
+      // 嵌套路由 》》 对应着Home组件中的router-view
+      children: [
+        {
+          path: 'wel',
+          component: Welcome
+        },
+        {
+          name: 'users',
+          path: 'users',
+          component: Users
+        }
+      ]
     }
 
   ]
